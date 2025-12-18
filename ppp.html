@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ItsBrauu</title>
+    <style>
+        /* ESTILO FRUTIGER AERO RETRO */
+        body {
+            background: #008080 url('https://web.archive.org/web/20230325141011im_/https://img00.deviantart.net/0677/i/2015/110/3/6/frutiger_aero_wallpaper_by_get_the_p_h_u_q_out-d8qf9sq.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Tahoma', 'Verdana', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-x: hidden;
+            cursor: url('https://cur.cursors-4u.net/games/gam-4/gam372.cur'), auto;
+        }
+
+        /* --- CAPA DEL ESCRITORIO (ICONOS) --- */
+        .desktop-icons {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: grid;
+            grid-template-columns: repeat(1, 80px);
+            gap: 20px;
+            z-index: 0;
+        }
+
+        .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            text-align: center;
+            transition: 0.2s;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .icon:hover { background: rgba(255, 255, 255, 0.2); outline: 1px solid rgba(255, 255, 255, 0.3); }
+        .icon img { width: 45px; height: 45px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); }
+        .icon span { color: white; font-size: 11px; text-shadow: 1px 1px 2px black; margin-top: 5px; font-weight: bold; }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .main-container {
+            max-width: 850px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        @media (min-width: 768px) {
+            .main-container { flex-direction: row; padding-top: 40px; }
+            .sidebar { width: 260px; }
+            .content-area { flex: 1; }
+        }
+
+        /* --- VENTANAS --- */
+        .window {
+            background: #ebeadb; 
+            border: 3px solid #0055e5;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 6px 6px 20px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .window.minimized {
+            transform: scale(0);
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            pointer-events: none;
+        }
+
+        .title-bar {
+            background: linear-gradient(to bottom, #0058e4 0%, #3b91ff 50%, #0058e4 100%);
+            padding: 4px 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-shadow: 1px 1px #000;
+        }
+
+        .window-controls { display: flex; gap: 3px; }
+        .win-btn {
+            width: 21px; height: 21px;
+            border: 1px solid white; border-radius: 3px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #4d90fe, #1967d2);
+            cursor: pointer;
+        }
+
+        .window-body { padding: 15px; background: rgba(255, 255, 255, 0.9); }
+
+        /* --- BOTONES REDES --- */
+        .nav-links a {
+            display: block; padding: 8px; margin-bottom: 6px;
+            background: linear-gradient(to bottom, #fff 0%, #cbdff5 100%);
+            border: 1px solid #7eaad4; border-radius: 4px;
+            text-decoration: none; color: #003399; font-weight: bold;
+            text-align: center; box-shadow: 1px 1px 0px #7eaad4;
+            font-size: 12px; transition: 0.2s;
+        }
+        .bsmp-store { background: linear-gradient(180deg, #39ff14 0%, #28b80d 100%) !important; color: #000 !important; animation: pulse 1s steps(2) infinite; }
+        .twitch-link { background: #9146FF !important; color: #fff !important; }
+        .discord-link { background: #5865F2 !important; color: #fff !important; }
+        .insta-link { background: #e1306c !important; color: #fff !important; }
+        .tiktok-link { background: #010101 !important; color: #fff !important; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+
+        /* --- AMIGOS CARRUSEL --- */
+        .friends-viewport { overflow: hidden; position: relative; background: rgba(255, 255, 255, 0.5); border: 1px inset #fff; padding: 10px 0; }
+        .friends-slider { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 200%; }
+        .friends-page { width: 50%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+        .friend-item img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #00d4ff; background: white; object-fit: cover; }
+        .friend-name { font-size: 9px; color: #003399; font-weight: bold; display: block; margin-top: 4px; }
+        .carousel-nav { display: flex; justify-content: center; gap: 15px; margin-top: 8px; }
+        .nav-arrow { background: #f0f0f0; border: 1px solid #7eaad4; padding: 2px 8px; cursor: pointer; font-size: 10px; border-radius: 2px; box-shadow: 1px 1px 0px #999; }
+
+        /* --- GALERIA --- */
+        .marquee-box { background: #ffffcc; border: 1px solid #e6db55; padding: 4px; font-size: 11px; margin-bottom: 10px; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+        .photo-card { background: white; border: 1px solid #ccc; padding: 5px; text-align: center; }
+        .photo-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+
+        /* --- BARRA DE TAREAS XP --- */
+        .taskbar {
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%; height: 40px;
+            background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
+            display: flex; align-items: center;
+            z-index: 2000;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
+        }
+        .start-btn {
+            background: linear-gradient(to bottom, #388e3c 0%, #4caf50 50%, #388e3c 100%);
+            height: 100%; padding: 0 12px;
+            display: flex; align-items: center; gap: 6px;
+            color: white; font-style: italic; font-weight: bold; font-size: 14px;
+            border-radius: 0 12px 12px 0; border-right: 1px solid #1a5a1d;
+            cursor: pointer; text-shadow: 1px 1px 1px #000;
+        }
+        .start-btn img { width: 20px; }
+
+        .taskbar-items { display: flex; align-items: center; gap: 4px; margin-left: 6px; }
+        .task-item {
+            height: 30px; background: #3c81f3; border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 3px; display: flex; align-items: center; padding: 0 8px;
+            color: white; font-size: 11px; cursor: pointer; transition: 0.1s;
+        }
+        .task-item:hover { background: #5296ff; }
+        .task-item img { width: 16px; margin-right: 4px; }
+
+        .taskbar-time {
+            margin-left: auto; color: white; padding: 0 12px; font-size: 11px;
+            background: linear-gradient(to bottom, #0997ff, #0053ee);
+            height: 100%; display: flex; align-items: center;
+            border-left: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* --- FOOTER --- */
+        .footer-loading { margin-top: 30px; text-align: center; color: white; text-shadow: 1px 1px 2px #000; font-size: 12px; }
+        .loading-bar-container { width: 200px; height: 15px; background: #e0e0e0; border: 2px solid #0055e5; margin: 10px auto; position: relative; overflow: hidden; border-radius: 3px; }
+        .loading-block { width: 40px; height: 100%; background: linear-gradient(to bottom, #3b91ff, #0058e4); position: absolute; animation: loadingMove 2s infinite linear; }
+        @keyframes loadingMove { 0% { left: -40px; } 100% { left: 200px; } }
+
+        /* AJUSTES MÓVIL */
+        @media (max-width: 767px) {
+            .desktop-icons { position: relative; top: 0; left: 0; grid-template-columns: repeat(5, 1fr); width: 100%; padding: 10px; }
+            .task-item span { display: none; } /* En móvil solo mostramos el icono */
+            .task-item img { margin-right: 0; width: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="desktop-icons">
+        <a href="https://bsmp.store" class="icon" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/1162/1162499.png">
+            <span>Shop</span>
+        </a>
+        <a href="https://www.twitch.tv/itsbrauu_" class="icon" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png">
+            <span>Twitch</span>
+        </a>
+        <a href="#" class="icon" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
+            <span>Insta</span>
+        </a>
+        <a href="#" class="icon" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png">
+            <span>TikTok</span>
+        </a>
+        <a href="https://discord.com/invite/vE7G2uB6" class="icon" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png">
+            <span>Discord</span>
+        </a>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="window" id="win-profile">
+                <div class="title-bar">
+                    <span>ItsBrauu_User</span>
+                    <div class="window-controls">
+                        <div class="win-btn" onclick="toggleWin('win-profile')">_</div>
+                        <div class="win-btn" style="background:red">X</div>
+                    </div>
+                </div>
+                <div class="window-body">
+                    <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/11239140-648a-4f9b-bda6-e96bdd91824e-profile_image-70x70.png" style="width:100%; border:1px solid #777; border-radius: 4px;">
+                    <div style="text-align:center; margin: 10px 0;">
+                        <strong style="color:#003399; font-size: 15px;">ItsBrauu ★</strong><br>
+                        <span style="font-size: 10px; font-style: italic;">"ola soy braw"</span>
+                    </div>
+                    <div class="nav-links">
+                        <a href="https://bsmp.store" class="bsmp-store" target="_blank">🛒 SHOP BSMP.STORE</a>
+                        <a href="https://www.twitch.tv/itsbrauu_" class="twitch-link" target="_blank">📺 TWITCH</a>
+                        <a href="#" class="insta-link" target="_blank">📸 INSTAGRAM</a>
+                        <a href="#" class="tiktok-link" target="_blank">🎵 TIKTOK</a>
+                        <a href="https://discord.com/invite/vE7G2uB6" class="discord-link" target="_blank">📩 DISCORD</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="window" id="win-spotify">
+                <div class="title-bar">
+                    <span>Spotify_Player</span>
+                    <div class="window-controls"><div class="win-btn" onclick="toggleWin('win-spotify')">_</div></div>
+                </div>
+                <div class="window-body" style="padding: 0;">
+                    <iframe src="https://open.spotify.com/embed/track/0IBhXEEKXhv0bdpboaw5M3?si=2150ca7191fc461a" width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="marquee-box">
+                <marquee scrollamount="5">★ BIENVENIDOS ★ PRODUCTOS EN BSMP.STORE ★ SÍGUEME EN MIS REDES ★</marquee>
+            </div>
+
+            <div class="window" id="win-images">
+                <div class="title-bar">
+                    <span>My_Images.exe</span>
+                    <div class="window-controls"><div class="win-btn" onclick="toggleWin('win-images')">_</div></div>
+                </div>
+                <div class="window-body">
+                   <div class="photo-grid">
+                        <div class="photo-card"><img src="https://media.discordapp.net/attachments/1232146818851405875/1451194697262567515/Screenshot_20251015_082300_TikTok.png?ex=694549e1&is=6943f861&hm=433a694f344655142079a6ad133758376d89c96a59f1ffaa67fbb107b9589b4c&=&format=webp&quality=lossless&width=385&height=856"><br><span style="font-size:8px">img_01.jpg</span></div>
+                        <div class="photo-card"><img src="https://media.discordapp.net/attachments/1232146818851405875/1451194742074376355/IMG_20251217_132817_128.jpg?ex=694549ec&is=6943f86c&hm=49e797221c93ab9bd9d0cfb8d82dc9cc1847010fb59922fcce20dfe1e0e87af7&=&format=webp&width=960&height=960"><br><span style="font-size:8px">img_02.jpg</span></div>
+                        <div class="photo-card"><img src="https://media.discordapp.net/attachments/1232146818851405875/1432563886892126279/df83891fc5f6238b72e831ef2ded9221.png?ex=6944bf16&is=69436d96&hm=26acc5f01d72a202cae4d954b4dce0c8cf91790c6e488f2f7b5c97e6fa314d32&=&format=webp&quality=lossless&width=540&height=960"><br><span style="font-size:8px">img_03.jpg</span></div>
+                        <div class="photo-card"><img src="https://media.discordapp.net/attachments/1232146818851405875/1420975385570574417/IMG_20250923_004512_845.webp?ex=6944c674&is=694374f4&hm=a421af2375630f47d41cce3244cd88a14149c1f4090bfbc8249beb230b3251b7&=&format=webp&width=540&height=960"><br><span style="font-size:8px">img_04.jpg</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="window" id="win-friends">
+                <div class="title-bar">
+                    <span>Friend_List_Network</span>
+                    <div class="window-controls"><div class="win-btn" onclick="toggleWin('win-friends')">_</div></div>
+                </div>
+                <div class="window-body">
+                    <div class="friends-viewport">
+                        <div class="friends-slider" id="friends-slider">
+                            <div class="friends-page">
+                                <a href="https://twitch.tv/eemocatt" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/057ea005-f861-44dd-833f-a0651d56f602-profile_image-70x70.png"><span class="friend-name">eemocatt</span></div></a>
+                                <a href="https://www.twitch.tv/quality_forever_" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/ef3b4b9a-376c-4c7c-8139-567e2d631948-profile_image-70x70.png"><span class="friend-name">quality_forever_</span></div></a>
+                                <a href="https://www.twitch.tv/ramirez_the_catt" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/c90ed2a7-d688-4b51-9c99-c864d1684d62-profile_image-70x70.jpeg"><span class="friend-name">RamirezGod</span></div></a>
+                                <a href="https://www.twitch.tv/wendysszx" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/330b104b-04a7-49c2-a2a7-f82c28b53d9f-profile_image-70x70.png"><span class="friend-name">Wendysszx</span></div></a>
+                            </div>
+                            <div class="friends-page">
+                                <a href="https://www.twitch.tv/alessaa_bna" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/518c3151-f2f3-49c0-99a3-497c0b3815b9-profile_image-70x70.jpeg"><span class="friend-name">alessaa_bna</span></div></a>
+                                <a href="https://www.twitch.tv/dylancho68" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/5ba97354-1988-4840-aa20-a1fbbc298e8e-profile_image-70x70.jpeg"><span class="friend-name">Dylancho68</span></div></a>
+                                <a href="https://www.twitch.tv/puvapudim" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/04b10e92-c790-4515-89bc-08c4a2d38df2-profile_image-70x70.jpeg"><span class="friend-name">Puvapudim</span></div></a>
+                                <a href="https://www.twitch.tv/elwhitexr" target="_blank"><div class="friend-item"><img src="https://static-cdn.jtvnw.net/jtv_user_pictures/00fff532-89c1-42ec-bea7-cc74838f7dfe-profile_image-70x70.png"><span class="friend-name">Whitexr</span></div></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-nav">
+                        <div class="nav-arrow" onclick="moveSlide(-1)"> « PREV </div>
+                        <div class="nav-arrow" onclick="moveSlide(1)"> NEXT » </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-loading">
+                <div class="created-by">CREATED BY BRAUUSTUDIOS</div>
+                <div class="loading-bar-container">
+                    <div class="loading-block"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="taskbar">
+        <div class="start-btn" onclick="location.reload();">
+            <img src="https://latestlogo.com/wp-content/uploads/2024/12/windows-xp-logo.png"> 
+            <span>inicio</span>
+        </div>
+        
+        <div class="taskbar-items">
+            <div class="task-item" onclick="toggleWin('win-profile')">
+                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png">
+                <span>Perfil</span>
+            </div>
+            <div class="task-item" onclick="toggleWin('win-spotify')">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111624.png">
+                <span>Music</span>
+            </div>
+            <div class="task-item" onclick="toggleWin('win-images')">
+                <img src="https://cdn-icons-png.flaticon.com/512/833/833453.png">
+                <span>Fotos</span>
+            </div>
+            <div class="task-item" onclick="toggleWin('win-friends')">
+                <img src="https://cdn-icons-png.flaticon.com/512/921/921347.png">
+                <span>Social</span>
+            </div>
+        </div>
+
+        <div class="taskbar-time" id="clock">12:00 PM</div>
+    </div>
+
+    <script>
+        function toggleWin(id) {
+            const win = document.getElementById(id);
+            win.classList.toggle('minimized');
+        }
+
+        const slider = document.getElementById('friends-slider');
+        let currentPos = 0;
+        function moveSlide(direction) {
+            currentPos += direction;
+            if (currentPos > 1) currentPos = 0;
+            if (currentPos < 0) currentPos = 1;
+            slider.style.transform = `translateX(-${currentPos * 50}%)`;
+        }
+        setInterval(() => moveSlide(1), 7000);
+
+        function updateClock() {
+            const now = new Date();
+            let h = now.getHours(), m = now.getMinutes();
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            m = m < 10 ? '0' + m : m;
+            document.getElementById('clock').innerHTML = `${h}:${m} ${ampm}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+
+</body>
+</html>
